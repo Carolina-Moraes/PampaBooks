@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Reviews</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <style>
+        /* Estilização para feedback de mensagens */
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Reviews</h1>
+    <div id="reviews-container"></div>
+
+    <h2>Enviar Review</h2>
+    <form id="review-form">
+        <label for="review-comment">Comentário:</label><br>
+        <textarea id="review-comment" name="review-comment" rows="4" required></textarea><br>
+        
+        <label for="rating">Nota:</label>
+        <select id="rating" name="rating" required>
+            <option value="" disabled selected>Selecione uma nota</option>
+            <option value="1">1 estrela</option>
+            <option value="2">2 estrelas</option>
+            <option value="3">3 estrelas</option>
+            <option value="4">4 estrelas</option>
+            <option value="5">5 estrelas</option>
+        </select><br>
+        
+        <button type="submit">Enviar Review</button>
+    </form>
+
+    <!-- Div para exibir a mensagem de feedback -->
+    <div id="feedback-message"></div>
+
+    <script>
+        const reviewsContainer = document.getElementById('reviews-container');
+        const feedbackMessage = document.getElementById('feedback-message');
+
+        // Função para adicionar um review à lista
+        function addReview(comment, rating) {
+            const reviewDiv = document.createElement('div');
+            reviewDiv.className = 'review';
+            reviewDiv.innerHTML = `
+                <h3>Avaliação: ${rating} estrelas</h3>
+                <p>${comment}</p>
+            `;
+            reviewsContainer.appendChild(reviewDiv);
+        }
+
+        // Função para exibir uma mensagem de feedback
+        function showMessage(message, isSuccess) {
+            feedbackMessage.textContent = message;
+            feedbackMessage.className = isSuccess ? 'success' : 'error';
+        }
+
+        // Manipulador de eventos para o formulário de reviews
+        document.getElementById('review-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const comment = document.getElementById('review-comment').value;
+            const rating = document.getElementById('rating').value;
+
+            // Verificação básica para garantir que ambos os campos estão preenchidos
+            if (!comment || !rating) {
+                showMessage('Erro: Preencha todos os campos!', false);
+                return;
+            }
+
+            // Adiciona o review à lista
+            addReview(comment, rating);
+
+            // Exibe mensagem de sucesso
+            showMessage('Review enviado com sucesso!', true);
+
+            // Limpa o formulário
+            this.reset();
+        });
+    </script>
+</body>
+</html>
