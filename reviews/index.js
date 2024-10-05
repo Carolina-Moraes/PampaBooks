@@ -1,48 +1,45 @@
-// Importar módulos
-require('dotenv').config();
+// index.js
+
+require('dotenv').config(); // Carregar variáveis de ambiente do arquivo .env
 const express = require('express');
 const mongoose = require('mongoose');
-const rotasReview = require('./rotas/rotasReview');
-const bodyParser = require('body-parser');
+const rotasReview = require('./routes/reviewRoutes');
 const path = require('path');
+const cors = require('cors'); // Importar o CORS
 
-// Criar aplicação express
 const app = express();
-// const port = process.env.PORT || 3002;
 const port = 3005;
 
-// Configurar a aplicação para usar o body-parser
-app.use(bodyParser.json());
+// Middleware para parsear JSON
+app.use(express.json());
+
+// Habilitar CORS (se necessário)
+app.use(cors());
+
+// Servir arquivos estáticos (frontend)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Conectar ao banco de dados
-mongoose.connect(process.env.MONGO_URI)
+// Conectar ao MongoDB
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
     console.log('Reviews conectado ao mongoDB!');
 })
 .catch((err) => {
-    console.log('Erro ao conectar ao mongoDB: ' + err);
+    console.error('Erro ao conectar ao mongoDB:', err);
 });
 
-// Configurar a aplicação para receber JSON 
-/* O Json é usado nas rotas */
-app.use(express.json());
+// Usar rotas com prefixo '/api'
+app.use('/api', rotasReview);
 
-// Utilizar rotas importadas
-app.use('/', rotasReview);
+// Rota padrão para verificar se o servidor está funcionando
+app.get('/', (req, res) => {
+    res.send('Servidor de Reviews está funcionando!');
+});
 
-// Iniciar a aplicação na porta 3005
+// Iniciar o servidor
 app.listen(port, () => {
     console.log(`Servidor de reviews rodando em http://localhost:${port}`);
 });
 
-// Exportar a aplicação configurada
+// Exportar a aplicação configurada (útil para testes)
 module.exports = app;
-
-
-
-
-
-
-
-
